@@ -27,28 +27,32 @@ public class BalancedBinaryTree {
             }else{
                 node.rightChild=addNode(node.rightChild,value);
             }
-
             //满足条件采用相应的旋转
-            if (Height(node.rightChild)-Height(node.leftChild)>1){
-                if (node.rightChild.rightChild!=null){
-                    node=RRBalance(node);
-                }
-                else if(node.rightChild.rightChild==null&&node.rightChild.leftChild!=null){
-                    node=RLBalance(node);
-                }
-            }
-            else if (Height(node.leftChild)-Height(node.rightChild)>1){
-                if (node.leftChild.leftChild!=null){
-                    node=LLBalance(node);
-                }
-                else if(node.leftChild.leftChild==null&&node.leftChild.rightChild!=null){
-                    node=LRBalance(node);
-                }
-            }
+            VALNode judgeNode = judge(node);
+            if (judgeNode!=null) node=judgeNode;
+
             node.height=UpdateHeight(node);
         }
         return node;
     }
+    //用于判别各种失衡情况
+    private VALNode judge(VALNode node){
+        if (Height(node.rightChild)-Height(node.leftChild)>1){
+            if (Height(node.rightChild.rightChild)>=Height(node.rightChild.leftChild)){
+               return RRBalance(node);
+            }else{
+                return RLBalance(node);
+            }
+        }else if (Height(node.leftChild)-Height(node.rightChild)>1){
+            if (Height(node.leftChild.leftChild)>=Height(node.leftChild.rightChild)){
+                return LLBalance(node);
+            }else{
+                return LRBalance(node);
+            }
+        }
+        return null;
+    }
+    //更新操作
     private int UpdateHeight(VALNode node){
         return  Math.max(Height(node.leftChild),Height(node.rightChild))+1;
     }
@@ -63,9 +67,11 @@ public class BalancedBinaryTree {
         }else{
             node.rightChild=null;
         }
+        node.height=UpdateHeight(node);
         rightChild.leftChild=node;
         return rightChild;
     }
+    //LL型 右旋
     public VALNode LLBalance(VALNode node){
         VALNode leftChild = node.leftChild;
         if (leftChild.rightChild!=null){
@@ -73,6 +79,7 @@ public class BalancedBinaryTree {
         }else{
             node.leftChild=null;
         }
+        node.height=UpdateHeight(node);
         leftChild.rightChild=node;
         return leftChild;
     }
@@ -82,6 +89,8 @@ public class BalancedBinaryTree {
         rightChild1.leftChild=leftChild;
         leftChild.rightChild=null;
         node.leftChild=rightChild1;
+        leftChild.height=UpdateHeight(leftChild);
+        rightChild1.height=UpdateHeight(rightChild1);
         return LLBalance(node);
     }
     public VALNode RLBalance(VALNode node){
@@ -90,10 +99,13 @@ public class BalancedBinaryTree {
         leftChild1.rightChild=rightChild;
         rightChild.leftChild=null;
         node.rightChild=leftChild1;
+        rightChild.height=UpdateHeight(rightChild);
+        leftChild1.height=UpdateHeight(leftChild1);
         return RRBalance(node);
+//        System.out.println(node.height);
+//        return node;
     }
-    // 计算节点的高度
-
+    //插入节点
     public void buildTree(int value) {
         this.root=addNode(this.root,value);
     }
@@ -112,6 +124,48 @@ public class BalancedBinaryTree {
     public boolean Search(int value){
         boolean result = Search(this.root, value);
         return result;
+    }
+    //删除节点操作
+/*    public void delete(int value){
+        VALNode parentNode = null;
+        VALNode pre=this.root;
+        while (pre.value!=value&&pre!=null){
+            if (pre.value<value){
+                parentNode=pre;
+                pre=pre.rightChild;
+            }else if (pre.value>value){
+                parentNode=pre;
+                pre=pre.leftChild;
+            }else {
+                if (parentNode.value>value){
+                    parentNode.leftChild=null;
+                }else{
+                    parentNode.rightChild=null;
+                }
+            }
+        }
+        if (pre==null) System.out.println("该平衡二叉树并没有你要删除的节点");
+        else{
+            VALNode judge = judge(parentNode);
+            if (judge!=null)
+        }
+    }
+    这段是开始写的错误的思想
+    */
+
+    private VALNode delete(int value,VALNode node){
+        if (node==null||node.value==value) return null;
+        if (node.value>value){
+            node.leftChild=delete(value,node.leftChild);
+        }else if (node.value<value){
+            node.rightChild=delete(value,node.rightChild);
+        }
+        VALNode judge = judge(node);
+        if (judge!=null) node=judge;
+        return node;
+    }
+    public void delete(int value){
+        this.root=delete(value,root);
     }
     private void DlrTraverse(VALNode Root){
         if (Root==null) return;
@@ -135,10 +189,4 @@ public class BalancedBinaryTree {
     public void LdrTraverse(){
         LdrTraverse(this.root);
     }
-    //插入一个节点
-    public void InsertValue(int value){
-        VALNode newNode = new VALNode(value);
-
-    }
-
 }
