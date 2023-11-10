@@ -152,20 +152,50 @@ public class BalancedBinaryTree {
     }
     这段是开始写的错误的思想
     */
-
-    private VALNode delete(int value,VALNode node){
-        if (node==null||node.value==value) return null;
-        if (node.value>value){
-            node.leftChild=delete(value,node.leftChild);
-        }else if (node.value<value){
-            node.rightChild=delete(value,node.rightChild);
+    //找到要删除节点的右子树的最小节点
+    private VALNode findMinNode(VALNode node){
+        VALNode MinNode;
+        if (node.leftChild==null) return node;
+        else{
+             MinNode=findMinNode(node.leftChild);
         }
-        VALNode judge = judge(node);
-        if (judge!=null) node=judge;
-        return node;
+        return MinNode;
+    }
+    //左孩子不为空，包括了左孩子不为空，右孩子为空和两个孩子均不为空的情况 进行删除节点
+    private void deleteNode(VALNode node,VALNode MinNode){
+        node.value=MinNode.value;
+        VALNode parent=node.rightChild;
+        if (MinNode==node.rightChild) node.rightChild=node.rightChild.rightChild;
+        else{
+            while (parent.leftChild!=MinNode){
+                parent=parent.leftChild;
+            }
+            parent.leftChild=MinNode.rightChild;
+        }
+    }
+    private VALNode delete(int value,VALNode node){
+        if (node==null) return null;
+        else{
+            if (node.value>value)
+                node.leftChild=delete(value,node.leftChild);
+            else if (node.value<value)
+                node.rightChild=delete(value,node.rightChild);
+            else{
+                if (node.rightChild==null&&node.leftChild==null){ //左孩子和右孩子均为空的情况
+                    return null;
+                }else if (node.rightChild!=null){  //左孩子不为空，包括了左孩子不为空，右孩子为空和两个孩子均不为空的情况
+                    VALNode MinNode = findMinNode(node.rightChild);
+                    deleteNode(node,MinNode);
+                }else if (node.rightChild==null){  //右孩子为空的情况
+                    return node.leftChild;    //右孩子为空只需要返回左子树的最大节点就行
+                }
+            }
+            UpdateHeight(node);
+            return node;
+        }
     }
     public void delete(int value){
-        this.root=delete(value,root);
+        delete(value,root);
     }
     private void DlrTraverse(VALNode Root){
         if (Root==null) return;

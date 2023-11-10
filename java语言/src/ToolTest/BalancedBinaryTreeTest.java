@@ -2,6 +2,8 @@ package ToolTest;
 
 import DataStructure.NonlinearStructure.BalancedBinaryTree;
 
+import java.util.LinkedList;
+
 public class BalancedBinaryTreeTest {
     /*
 * 平衡二叉树的方法实现成功但是一点错误就是节点的高度有问题，要去看看是哪里的问题
@@ -15,16 +17,19 @@ public class BalancedBinaryTreeTest {
 * */
     public static void main(String[] args) {
         BalancedBinaryTree tree = new BalancedBinaryTree();
-        tree.buildTree(5);
-        tree.buildTree(7);
-        tree.buildTree(2);
-        tree.buildTree(1);
-        tree.buildTree(3);
+        tree.buildTree(6);
         tree.buildTree(4);
-        tree.buildTree(8);
+        tree.buildTree(11);
+        tree.buildTree(5);
+        tree.buildTree(3);
         tree.buildTree(9);
+        tree.buildTree(12);
+        tree.buildTree(13);
         tree.buildTree(10);
-        tree.delete(7);
+        tree.buildTree(7);
+        tree.buildTree(1);
+        tree.buildTree(8);
+        tree.delete(6);
         //这里回递的时候3的高度有误，其他正确 ---解决：将更新高度放在旋转后面，之前3的高度为5，原因是3在旋转后更新高度是+1
         tree.DlrTraverse();
         System.out.println();
