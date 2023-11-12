@@ -60,7 +60,7 @@ public class BalancedBinaryTree {
         return node == null?0:node.height; // 空节点高度为0
     }
     //RR型 左旋
-    public VALNode RRBalance(VALNode node){
+    private VALNode RRBalance(VALNode node){
         VALNode rightChild = node.rightChild;
         if (rightChild.leftChild!=null){
             node.rightChild=rightChild.leftChild;
@@ -72,7 +72,7 @@ public class BalancedBinaryTree {
         return rightChild;
     }
     //LL型 右旋
-    public VALNode LLBalance(VALNode node){
+    private VALNode LLBalance(VALNode node){
         VALNode leftChild = node.leftChild;
         if (leftChild.rightChild!=null){
             node.leftChild=leftChild.rightChild;
@@ -83,7 +83,7 @@ public class BalancedBinaryTree {
         leftChild.rightChild=node;
         return leftChild;
     }
-    public VALNode LRBalance(VALNode node){
+    private VALNode LRBalance(VALNode node){
         VALNode leftChild = node.leftChild;
         VALNode rightChild1 = leftChild.rightChild;
         rightChild1.leftChild=leftChild;
@@ -93,7 +93,7 @@ public class BalancedBinaryTree {
         rightChild1.height=UpdateHeight(rightChild1);
         return LLBalance(node);
     }
-    public VALNode RLBalance(VALNode node){
+    private VALNode RLBalance(VALNode node){
         VALNode rightChild = node.rightChild;
         VALNode leftChild1 = rightChild.leftChild;
         leftChild1.rightChild=rightChild;
