@@ -183,7 +183,7 @@ public class BalancedBinaryTree {
             else{
                 if (node.rightChild==null&&node.leftChild==null){ //左孩子和右孩子均为空的情况
                     return null;
-                }else if (node.rightChild!=null){  //左孩子不为空，包括了左孩子不为空，右孩子为空和两个孩子均不为空的情况
+                }else if (node.rightChild!=null){  //右孩子不为空，包括了右孩子不为空，左孩子为空和两个孩子均不为空的情况
                     VALNode MinNode = findMinNode(node.rightChild);
                     deleteNode(node,MinNode);
                 }else if (node.rightChild==null){  //右孩子为空的情况
