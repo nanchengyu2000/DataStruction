@@ -1,4 +1,8 @@
 package DataStructure.NonlinearStructure;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
 /*
 * 视频中没有讲到堆，这里我将对堆进行一个理解
 * 堆的定义：
@@ -50,6 +54,179 @@ package DataStructure.NonlinearStructure;
  *常见的操作：优先队列、堆排序
  *
 * */
+class Node {
+    int value;
+    Node leftChild;
+    Node rightChild;
+
+    public Node(int value) {
+        this.value = value;
+    }
+}
+//大根堆
 public class Heap {
+    private Node root=null;
+    private int length=1;
+    //获取最后一个父元素
+    private Node getLastRoot(){
+        if (root==null) return null;
+        Queue<Node> queue=new LinkedList<>();
+        queue.add(root);
+        while(queue.size()!=0){
+            Node pollNode = queue.poll();
+            if (pollNode.leftChild==null||pollNode.rightChild==null) return pollNode;
+            if (pollNode.leftChild!=null) queue.add(pollNode.leftChild);
+            if (pollNode.rightChild!=null) queue.add(pollNode.rightChild);
+        }
+        Node tmp=root;
+        while(tmp.leftChild!=null){
+            tmp=tmp.leftChild;
+        }
+        return tmp;
+    }
+    //获取最后一个叶子节点
+    private Node getLastLeaf(){
+        if (root.leftChild==null&&root.rightChild==null) return root;
+        Queue<Node> queue=new LinkedList<>();
+        queue.add(root);
+        while (queue.size()!=0){
+            Node pollNode = queue.poll();
+            if (pollNode.leftChild!=null) queue.add(pollNode.leftChild);
+            if (pollNode.rightChild!=null) queue.add(pollNode.rightChild);
+            if (queue.size()==1) return queue.poll();
+        }
+        return null;
+    }
+    //按大根堆 插入元素
+    public void insertByDagon(int value){
+        Node newValue = new Node(value);
+        Node lastRoot = getLastRoot();
+        if (root==null){
+            root=newValue;
+            return;
+        }
+        else if (lastRoot.leftChild==null) lastRoot.leftChild=newValue;
+        else lastRoot.rightChild=newValue;
+        upperConcern(newValue,true);
+        ++length;
+    }
+    public void insertByRootlet(int value){
+        Node newValue = new Node(value);
+        Node lastRoot = getLastRoot();
+        if (root==null){
+            root=newValue;
+            return;
+        }
+        else if (lastRoot.leftChild==null) lastRoot.leftChild=newValue;
+        else lastRoot.rightChild=newValue;
+        upperConcern(newValue,false);
+        ++length;
+    }
+    //上虑
+    private void upperConcern(Node node,boolean flag){
+        Node current = node;
+        while (current != root) {
+            Node parent = getParentNode(current);
+            if (flag?current.value > parent.value:current.value < parent.value) {
+                // 交换节点值
+                int temp = parent.value;
+                parent.value = current.value;
+                current.value = temp;
+            } else {
+                break; // 如果不需要交换，则不再上浮
+            }
+            current = parent; // 继续向上比较
+        }
+    }
+    //下虑
+    private void downConcern(Node node){
+        Node current = node;
+        while (current != null) {
+            Node maxChild = getMaxChild(current);
+            if (maxChild != null && maxChild.value > current.value) {
+                // 交换节点值
+                int temp = current.value;
+                current.value = maxChild.value;
+                maxChild.value = temp;
+                current = maxChild;
+            } else {
+                break; // 不需要交换则退出循环
+            }
+        }
+    }
+    private Node getMaxChild(Node node) {
+        if (node.leftChild == null && node.rightChild == null) {
+            return null;
+        } else if (node.rightChild == null || node.leftChild.value > node.rightChild.value) {
+            return node.leftChild;
+        } else {
+            return node.rightChild;
+        }
+    }
+    // 获取节点的父节点
+    private Node getParentNode(Node node) {
+        if (node == null || node == root) {
+            return null;
+        }
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+            if (current.leftChild == node || current.rightChild == node) {
+                return current;
+            }
+            if (current.leftChild != null) {
+                queue.add(current.leftChild);
+            }
+            if (current.rightChild != null) {
+                queue.add(current.rightChild);
+            }
+        }
+        return null;
+    }
+    //将堆转换成为数组
+    public int[] convertToArray(){
+        int[] values=new int[length];
+        Queue<Node> queue=new LinkedList<>();
+        queue.add(root);
+        int i=0;
+        while (queue.size()!=0){
+            Node pollNode = queue.poll();
+            values[i] = pollNode.value;
+            i++;
+            if (pollNode.leftChild!=null) queue.add(pollNode.leftChild);
+            if (pollNode.rightChild!=null) queue.add(pollNode.rightChild);
+        }
+        return values;
+    }
+    //将数组传话成为堆
+    public static Heap convertToHeap(int[] values,boolean flag){
+        int size=values.length;
+        Heap heap = new Heap();
+        for (int i = 0; i < size; i++) {
+            if (flag) heap.insertByDagon(values[i]);
+            else heap.insertByRootlet(values[i]);
+        }
+        return heap;
+    }
+    //堆排序操作    有问题
+    public int[] heapSort(){
+        int[] values=new int[length];
+        for (int i = 0; i < length; i++) {
+            values[i]= root.value;
+            Node lastLeaf = getLastLeaf();
+            if (lastLeaf!=null){
+                System.out.println(lastLeaf.value);
+//                root.value=lastLeaf.value;
+                Node parentNode = getParentNode(lastLeaf);
+                if (parentNode==null) continue;
+                else if (parentNode.leftChild==lastLeaf) parentNode.leftChild=null;
+                else parentNode.rightChild=null;
+//                downConcern(root);
+            }
+
+        }
+        return values;
+    }
 
 }
