@@ -8,7 +8,6 @@ import java.util.LinkedList;
 public class Tree<T> {
     Node<T> Root;
 
-
     public Tree() {
         Root = null;
     }
@@ -20,7 +19,6 @@ public class Tree<T> {
     public class Node<T>{
         T value;
         LinkedList<Node<T>> ChildTree;
-
         public Node(T value) {
             this.value = value;
         }

@@ -1,6 +1,7 @@
 package DataStructure.NonlinearStructure;
 
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 
 /*
@@ -97,7 +98,7 @@ public class Heap {
         }
         return null;
     }
-    //按大根堆 插入元素
+    //大根堆的插入
     public void insertByDagon(int value){
         Node newValue = new Node(value);
         Node lastRoot = getLastRoot();
@@ -110,6 +111,7 @@ public class Heap {
         upperConcern(newValue,true);
         ++length;
     }
+    //小根堆的插入
     public void insertByRootlet(int value){
         Node newValue = new Node(value);
         Node lastRoot = getLastRoot();
@@ -142,25 +144,26 @@ public class Heap {
     private void downConcern(Node node){
         Node current = node;
         while (current != null) {
-            Node maxChild = getMaxChild(current);
-            if (maxChild != null && maxChild.value > current.value) {
+            Node minChild = getMinChild(current);
+            if (minChild != null && minChild.value < current.value) {
                 // 交换节点值
                 int temp = current.value;
-                current.value = maxChild.value;
-                maxChild.value = temp;
-                current = maxChild;
+                current.value = minChild.value;
+                minChild.value = temp;
+                current = minChild;
             } else {
                 break; // 不需要交换则退出循环
             }
         }
     }
-    private Node getMaxChild(Node node) {
+    //获取最小值的子树
+    private Node getMinChild(Node node) {
         if (node.leftChild == null && node.rightChild == null) {
             return null;
-        } else if (node.rightChild == null || node.leftChild.value > node.rightChild.value) {
+        } else if (node.rightChild == null || node.leftChild.value < node.rightChild.value) {
             return node.leftChild;
         } else {
-            return node.rightChild;
+            return node.leftChild;
         }
     }
     // 获取节点的父节点
@@ -209,24 +212,21 @@ public class Heap {
         }
         return heap;
     }
-    //堆排序操作    有问题
     public int[] heapSort(){
         int[] values=new int[length];
         for (int i = 0; i < length; i++) {
             values[i]= root.value;
             Node lastLeaf = getLastLeaf();
             if (lastLeaf!=null){
-                System.out.println(lastLeaf.value);
-//                root.value=lastLeaf.value;
+                root.value=lastLeaf.value;
                 Node parentNode = getParentNode(lastLeaf);
                 if (parentNode==null) continue;
-                else if (parentNode.leftChild==lastLeaf) parentNode.leftChild=null;
+                if (parentNode.leftChild==lastLeaf) parentNode.leftChild=null;
                 else parentNode.rightChild=null;
-//                downConcern(root);
+                downConcern(root);
             }
 
         }
         return values;
     }
-
 }

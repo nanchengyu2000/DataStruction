@@ -30,7 +30,6 @@ public class BalancedBinaryTree {
             //满足条件采用相应的旋转
             VALNode judgeNode = judge(node);
             if (judgeNode!=null) node=judgeNode;
-
             node.height=UpdateHeight(node);
         }
         return node;
