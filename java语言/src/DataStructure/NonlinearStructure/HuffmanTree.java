@@ -1,6 +1,8 @@
 package DataStructure.NonlinearStructure;
 
 
+import DataStructure.LinearStructure.SequenceList.SqQueue;
+
 import java.util.*;
 
 /*
@@ -27,24 +29,41 @@ public class HuffmanTree {
     public void add(int value,int weight){
         trees.add(new HuffmanNode(value,weight));
     }
-    private void builder(){
-        for (int i = 0; i < trees.size(); i+=2) {
-            HuffmanNode min1 = getMin(i);  //这样很慢，每次进行获取最小的两个数时都需要进行排序，可更改
-            HuffmanNode min2 =getMin(i+1);
+    public void builder(){
+        int size=trees.size();
+        trees.sort( new compare());
+        for (int i = 0; i < size-1; i++) {
+            trees.sort( new compare());
+            HuffmanNode min1 = trees.get(0);
+            HuffmanNode min2 =trees.get(1);
             HuffmanNode newNode = new HuffmanNode(-1, min2.weight + min1.weight);
             newNode.left=min1;
             newNode.right=min2;
-            delete(i,i+1);
+            delete();
             trees.add(newNode);
         }
     }
-    public void delete(int min1,int min2){
-        trees.remove(min1);
-        trees.remove(min2);
+    public void delete(){
+        trees.remove(0);
+        trees.remove(0);
     }
-    public HuffmanNode getMin(int index){
-        trees.sort( new compare());
-        return trees.get(index);
+    private void levelTraverse(HuffmanNode Root){
+        if (Root==null) return;
+        else {
+            SqQueue<HuffmanNode> SqQueue = new SqQueue<>(100);
+            SqQueue.enqueue(Root);
+            while (SqQueue.getSize()!=0){
+                HuffmanNode deNode = SqQueue.dequeue();
+                System.out.print(deNode.value+" ");
+                if (deNode.left!=null)
+                    SqQueue.enqueue(deNode.left);
+                if (deNode.right!=null)
+                    SqQueue.enqueue(deNode.right);
+            }
+        }
+    }
+    public void levelTraverse(){
+        levelTraverse(this.trees.get(0));
     }
 }
 class compare implements Comparator<HuffmanNode> {
